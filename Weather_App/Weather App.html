@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 20px;
+            background-image: url('https://t4.ftcdn.net/jpg/04/97/80/99/360_F_497809944_FMo3DO6j7XSlb9rZKOlnqaaWoJhuZXBm.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .weather-info {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .location-input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 10px;
+            background-color: #00a4cc;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .submit-button:hover {
+            background-color: #007396;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Weather App</h1>
+        <div class="weather-info">
+            <p>Enter your location to get the current weather:</p>
+            <input type="text" class="location-input" id="locationInput" placeholder="Enter location">
+            <button class="submit-button" onclick="getWeather()">Get Weather</button>
+        </div>
+        <div id="weatherDetails" class="weather-info"></div>
+    </div>
+
+    <script>
+        async function getWeather() {
+            const location = document.getElementById('locationInput').value;
+            const apiKey = ''; // Place your api key here
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${apiKey}&units=metric`;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error('Location not found');
+                }
+                const weatherData = await response.json();
+                displayWeather(weatherData);
+            } catch (error) {
+                document.getElementById('weatherDetails').innerText = error.message;
+            }
+        }
+
+        function displayWeather(data) {
+            const weatherDetails = document.getElementById('weatherDetails');
+            const temperature = data.main.temp;
+            const description = data.weather[0].description;
+            const humidity = data.main.humidity;
+            const windSpeed = data.wind.speed;
+            const icon = `http://openweathermap.org/img/wn/${data.weather[0].icon}.png`;
+
+            weatherDetails.innerHTML = `
+                <h2>Weather in ${data.name}</h2>
+                <img src="${icon}" alt="${description}">
+                <p>Temperature: ${temperature}°C</p>
+                <p>Description: ${description}</p>
+                <p>Humidity: ${humidity}%</p>
+                <p>Wind Speed: ${windSpeed} m/s</p>
+            `;
+        }
+    </script>
+</body>
+</html>
